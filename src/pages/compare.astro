@@ -1,12 +1,14 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import ModelComparison from '../components/ModelComparison.tsx';
 ---
 
-<Layout title="Home">
+<Layout title="Model Comparison">
   <nav style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
     <a href="/" style="margin-right: 1rem; font-weight: bold;">Home</a>
     <a href="/compare" style="font-weight: bold;">Compare Models</a>
   </nav>
-  <Welcome />
+  <main style="padding: 1rem;">
+    <ModelComparison client:load />
+  </main>
 </Layout>
