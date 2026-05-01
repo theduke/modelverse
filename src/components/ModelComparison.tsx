@@ -46,17 +46,77 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
       });
   }, []);
 
-  // Filter models based on search
-  const filteredModels = useMemo(() => {
+  // Fuzzy search scoring function
+  const getMatchScore = (text: string | null, query: string): number => {
+    if (!text) return 0;
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    
+    // Exact match (highest priority)
+    if (lowerText === lowerQuery) return 100;
+    
+    // Prefix match
+    if (lowerText.startsWith(lowerQuery)) return 80;
+    
+    // Substring match
+    if (lowerText.includes(lowerQuery)) return 60;
+    
+    // Fuzzy match: check if characters appear in order
+    let textIdx = 0;
+    let queryIdx = 0;
+    let consecutiveBonus = 0;
+    let lastMatchIdx = -1;
+    
+    while (textIdx < lowerText.length && queryIdx < lowerQuery.length) {
+      if (lowerText[textIdx] === lowerQuery[queryIdx]) {
+        // Bonus for consecutive matches
+        if (textIdx === lastMatchIdx + 1) {
+          consecutiveBonus += 2;
+        }
+        lastMatchIdx = textIdx;
+        queryIdx++;
+      }
+      textIdx++;
+    }
+    
+    if (queryIdx === lowerQuery.length) {
+      // All query characters found in order
+      // Score based on how much of the text was "used"
+      const compactness = 1 - (textIdx / lowerText.length);
+      return 30 + Math.floor(compactness * 20) + consecutiveBonus;
+    }
+    
+    return 0;
+  };
+
+  // Filter models based on search with fuzzy matching
+  const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
-    const query = searchQuery.toLowerCase();
-    return allModels.filter(
-      m =>
-        m.name.toLowerCase().includes(query) ||
-        m.id.toLowerCase().includes(query) ||
-        (m.lab && m.lab.toLowerCase().includes(query))
-    );
+    
+    const scored = allModels.map(model => {
+      const nameScore = getMatchScore(model.name, searchQuery);
+      const idScore = getMatchScore(model.id, searchQuery);
+      const labScore = getMatchScore(model.lab, searchQuery);
+      
+      const maxScore = Math.max(nameScore, idScore, labScore);
+      const matchedField = nameScore >= idScore && nameScore >= labScore ? 'name' 
+        : idScore >= labScore ? 'id' : 'lab';
+      
+      return { model, score: maxScore, matchedField };
+    });
+    
+    return scored
+      .filter(item => item.score > 0)
+      .sort((a, b) => {
+        // Sort by score descending (higher score = better match)
+        if (b.score !== a.score) return b.score - a.score;
+        // Then by name alphabetically for same scores
+        return a.model.name.localeCompare(b.model.name);
+      });
   }, [allModels, searchQuery]);
+
+  // Extract just the models for backward compatibility
+  const filteredModels = filteredResults.map(r => r.model);
 
   const addModel = (model: Model) => {
     if (!selectedModels.find(m => m.id === model.id)) {
@@ -100,9 +160,9 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
           onChange={e => setSearchQuery(e.target.value)}
           className="search-input"
         />
-        {searchQuery && filteredModels.length > 0 && (
+        {searchQuery && filteredResults.length > 0 && (
           <div className="search-results">
-            {filteredModels.slice(0, 10).map(model => (
+            {filteredResults.slice(0, 10).map(({ model, score, matchedField }) => (
               <button
                 key={model.id}
                 onClick={() => addModel(model)}
@@ -111,6 +171,19 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
                 <span>
                   <strong>{model.name}</strong>
                   <span className="text-muted" style={{ marginLeft: '0.5rem' }}>{model.lab}</span>
+                  <span 
+                    className="match-badge" 
+                    style={{ 
+                      marginLeft: '0.5rem',
+                      fontSize: '0.7rem',
+                      padding: '0.1rem 0.4rem',
+                      borderRadius: '3px',
+                      backgroundColor: score >= 80 ? '#10b981' : score >= 60 ? '#3b82f6' : '#6b7280',
+                      color: 'white'
+                    }}
+                  >
+                    {score >= 100 ? 'exact' : score >= 80 ? 'starts with' : score >= 60 ? 'contains' : 'fuzzy'}
+                  </span>
                 </span>
                 <span className="text-muted">
                   {model.pricing ? formatPrice(model.pricing.prompt) : 'N/A'}
