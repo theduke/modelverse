@@ -110,9 +110,9 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
               >
                 <span>
                   <strong>{model.name}</strong>
-                  <span style={{ fontSize: '0.875rem', color: '#6b7280', marginLeft: '0.5rem' }}>{model.lab}</span>
+                  <span className="text-muted" style={{ marginLeft: '0.5rem' }}>{model.lab}</span>
                 </span>
-                <span style={{ fontSize: '0.875rem', color: '#4b5563' }}>
+                <span className="text-muted">
                   {model.pricing ? formatPrice(model.pricing.prompt) : 'N/A'}
                 </span>
               </button>
@@ -180,7 +180,7 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
       {selectedModels.length >= 2 && (
         <div>
           <h2>Detailed Comparison</h2>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="comparison-table-wrapper">
             <table className="comparison-table">
               <thead>
                 <tr>
@@ -230,7 +230,7 @@ export default function ModelComparison({ initialModels = [] }: ModelComparisonP
                 <tr>
                   <td className="attr-label">Model ID</td>
                   {selectedModels.map(m => (
-                    <td key={m.id} style={{ fontSize: '0.75rem', color: '#4b5563' }}>{m.id}</td>
+                    <td key={m.id} className="text-muted">{m.id}</td>
                   ))}
                 </tr>
               </tbody>
