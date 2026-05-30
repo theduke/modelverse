@@ -1,0 +1,15 @@
+annotations:
+  shipitcli.com/config:
+    commands: {}
+    convert_redirects: true
+    port: 8080
+    sws_version: 2.38.0
+    static_dir: dist
+  shipitcli.com/provider: staticfile
+  shipitcli.com/version: 0.19.9
+kind: wasmer.io/App.v0
+package: .
+owner: theduke
+name: modelverse
+domains:
+  - modelverse.wasmer.app
