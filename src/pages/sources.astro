@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Sources">
+  <main class="sources-page">
+    <h1>Sources</h1>
+    <p class="subtitle">Data sources used in Modelverse</p>
+    
+    <div class="sources-grid">
+      <div class="source-card">
+        <div class="source-image">
+          <img 
+            src="/images/openrouter.svg" 
+            alt="OpenRouter Logo" 
+            width="120" 
+            height="120"
+          />
+        </div>
+        <div class="source-description">
+          <h3>OpenRouter</h3>
+          <p>
+            OpenRouter is used as the primary source for model metadata and pricing data. 
+            It provides a unified API for accessing hundreds of AI models across multiple providers,
+            with real-time pricing and availability information.
+          </p>
+          <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer" class="source-link">
+            Visit OpenRouter →
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .sources-page {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .source-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .source-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .source-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .source-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .source-description h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+  }
+
+  .source-description p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .source-link {
+    display: inline-block;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .source-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .source-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+</style>
