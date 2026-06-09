@@ -1,8 +1,10 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import ModelComparison from '../components/ModelComparison.tsx';
 ---
 
-<Layout title="Home">
-  <Welcome />
+<Layout title="Model Comparison">
+  <main class="main-content">
+    <ModelComparison client:load />
+  </main>
 </Layout>
